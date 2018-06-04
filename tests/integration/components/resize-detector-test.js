@@ -1,60 +1,62 @@
-import Ember from 'ember';
-import { moduleForComponent, test } from 'ember-qunit';
+import { htmlSafe } from '@ember/template';
+import { later } from '@ember/runloop';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render, settled, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 
-const {
-  String: { htmlSafe },
-  run: { later }
-} = Ember;
+module('Integration | Component | resize detector', function(hooks) {
+  setupRenderingTest(hooks);
 
-moduleForComponent('resize-detector', 'Integration | Component | resize detector', {
-  integration: true
-});
-
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
-
-  this.render(hbs`{{resize-detector}}`);
-
-  assert.equal(this.$().text().trim(), '');
-
-  // Template block usage:
-  this.render(hbs`
-    {{#resize-detector}}
-      template block text
-    {{/resize-detector}}
-  `);
-
-  assert.equal(this.$().text().trim(), 'template block text');
-});
-
-test('it triggers an action when target changes sizes', function(assert){
-
-  assert.expect(2);
-
-  this.set('style', htmlSafe('width: 300px; height: 300px;'));
-
-  let received;
-  this.on('resized', function(lastSize){
-    received = lastSize;
+  hooks.beforeEach(function() {
+    this.actions = {};
+    this.send = (actionName, ...args) => this.actions[actionName].apply(this, args);
   });
 
-  this.render(hbs`
-    {{resize-detector '#square' on-resize=(action 'resized')}}
-    <div id="square" style={{style}}></div>
-  `);
+  test('it renders', async function(assert) {
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
 
-  later(() => {
-    assert.deepEqual(received, { width: 300, height: 300 }, 'initial render caused size to be received');
+    await render(hbs`{{resize-detector}}`);
 
-    this.set('style', htmlSafe('width: 200px; height: 200px;'));
-  }, 20);
+    assert.equal(find('*').textContent.trim(), '');
 
-  later(() => {
-    assert.deepEqual(received, { width: 200, height: 200 }, 'received updated size');
-  }, 70);
+    // Template block usage:
+    await render(hbs`
+      {{#resize-detector}}
+        template block text
+      {{/resize-detector}}
+    `);
 
-  return wait();
+    assert.equal(find('*').textContent.trim(), 'template block text');
+  });
+
+  test('it triggers an action when target changes sizes', async function(assert) {
+
+    assert.expect(2);
+
+    this.set('style', htmlSafe('width: 300px; height: 300px;'));
+
+    let received;
+    this.actions.resized = function(lastSize){
+      received = lastSize;
+    };
+
+    await render(hbs`
+      {{resize-detector '#square' on-resize=(action 'resized')}}
+      <div id="square" style={{style}}></div>
+    `);
+
+    later(() => {
+      assert.deepEqual(received, { width: 300, height: 300 }, 'initial render caused size to be received');
+
+      this.set('style', htmlSafe('width: 200px; height: 200px;'));
+    }, 20);
+
+    later(() => {
+      assert.deepEqual(received, { width: 200, height: 200 }, 'received updated size');
+    }, 70);
+
+    return settled();
+  });
 });

@@ -1,11 +1,8 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { htmlSafe } from '@ember/template';
+import { computed } from '@ember/object';
 
-const {
-  String: { htmlSafe },
-  computed
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['resizable-container'],
   
   style: computed('height', 'width', function(){

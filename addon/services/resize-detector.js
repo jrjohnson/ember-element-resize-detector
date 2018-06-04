@@ -1,12 +1,16 @@
 /* global elementResizeDetectorMaker */
 
+import $ from 'jquery';
+
+import Service from '@ember/service';
+
 import Ember from 'ember';
 
 const {
   Logger: { error }
 } = Ember;
 
-export default Ember.Service.extend({
+export default Service.extend({
 
   init() {
     this._super(...arguments);
@@ -16,7 +20,7 @@ export default Ember.Service.extend({
   },
 
   setup(selector, callback) {
-    let [element] = Ember.$(selector).toArray();
+    let [element] = $(selector).toArray();
     if (!element) {
       error(`service:resize-detector - could not find an element matching ${selector}`);
       return;
@@ -25,7 +29,7 @@ export default Ember.Service.extend({
   },
 
   teardown(selector, callback) {
-    let [element] = Ember.$(selector).toArray();
+    let [element] = $(selector).toArray();
     if (element) {
       this.detector.removeListener(element, callback);
     }

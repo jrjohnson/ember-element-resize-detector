@@ -1,12 +1,10 @@
-import Ember from 'ember';
+import $ from 'jquery';
+import Component from '@ember/component';
+import { inject as service } from '@ember/service';
+import { bind, scheduleOnce } from '@ember/runloop';
 import layout from '../templates/components/resize-detector';
 
-const {
-  inject: { service },
-  run: { scheduleOnce, bind }
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   layout,
   tagName: '',
   resizeDetector: service(),
@@ -27,7 +25,7 @@ export default Ember.Component.extend({
   },
 
   onResize(element) {
-    let $el = Ember.$(element);
+    let $el = $(element);
     this.sendAction('on-resize', {
       width: $el.width(),
       height: $el.height()
