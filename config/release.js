@@ -1,4 +1,4 @@
-/* jshint node:true */
+'use strict';
 
 var runCommand = require('ember-addon-genie/lib/utils/run-command');
 
