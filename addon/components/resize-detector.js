@@ -11,7 +11,7 @@ export default Component.extend({
 
   didInsertElement() {
     this._super(...arguments);
-    
+
     scheduleOnce('afterRender', this, this.setup);
   },
 
@@ -26,6 +26,7 @@ export default Component.extend({
 
   onResize(element) {
     let $el = $(element);
+    /* eslint ember/closure-actions:0 */
     this.sendAction('on-resize', {
       width: $el.width(),
       height: $el.height()
